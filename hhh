@@ -1,0 +1,67 @@
+// Data from the table
+const temperatureRise = [9, 25, 20, 12, 15, 22];
+const insulation = [25, 70, 50, 30, 45, 60];
+
+// Function to calculate the least-squares line
+function leastSquaresLine(x, y) {
+  const n = x.length;
+  const sumX = x.reduce((acc, val) => acc + val, 0);
+  const sumY = y.reduce((acc, val) => acc + val, 0);
+  const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+  const sumXSquare = x.reduce((acc, val) => acc + val ** 2, 0);
+
+  const m = (n * sumXY - sumX * sumY) / (n * sumXSquare - sumX ** 2);
+  const b = (sumY - m * sumX) / n;
+
+  return { m, b };
+}
+
+// Function to calculate the correlation coefficient (r)
+function correlationCoefficient(x, y) {
+  const n = x.length;
+  const sumX = x.reduce((acc, val) => acc + val, 0);
+  const sumY = y.reduce((acc, val) => acc + val, 0);
+  const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+  const sumXSquare = x.reduce((acc, val) => acc + val ** 2, 0);
+  const sumYSquare = y.reduce((acc, val) => acc + val ** 2, 0);
+
+  const r =
+    (n * sumXY - sumX * sumY) /
+    Math.sqrt((n * sumXSquare - sumX ** 2) * (n * sumYSquare - sumY ** 2));
+
+  return r;
+}
+
+// Function to calculate the coefficient of determination (r^2)
+function coefficientOfDetermination(r) {
+  return r ** 2;
+}
+
+// Function to perform hypothesis test and check model usefulness
+function hypothesisTest(m, standardError, alpha) {
+  const tStatistic = m / standardError;
+  // Assuming a two-tailed test
+  const criticalValue = /* Lookup critical value from t-distribution table */;
+  const isModelUseful = Math.abs(tStatistic) > criticalValue;
+  return isModelUseful;
+}
+
+// Function to estimate mean temperature rise for a given insulation value
+function estimateMeanTemperatureRise(xValue, m, b) {
+  const y = m * xValue + b;
+  return y;
+}
+
+// Sample Usage
+const { m, b } = leastSquaresLine(insulation, temperatureRise);
+const r = correlationCoefficient(insulation, temperatureRise);
+const rSquared = coefficientOfDetermination(r);
+const isModelUseful = hypothesisTest(m, /* standard error */, 0.01);
+const estimatedMeanTemperatureRise = estimateMeanTemperatureRise(35, m, b);
+
+// Log the results
+console.log("Least Squares Line: y =", m, "x +", b);
+console.log("Correlation Coefficient (r):", r);
+console.log("Coefficient of Determination (r^2):", rSquared);
+console.log("Is the Model Useful?", isModelUseful ? "Yes" : "No");
+console.log("Estimated Mean Temperature Rise for Insulation of 35:", estimatedMeanTemperatureRise);
